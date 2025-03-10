@@ -31,4 +31,4 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ env.ORG_LC }}s/headers-app:latest
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest
