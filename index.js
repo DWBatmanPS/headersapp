@@ -35,15 +35,6 @@ app.get("/", (req, res) => {
     })
 })
 
-app.get("/live-tv", (req, res) => {
-    res.json({
-        method: req.method,
-        url: req.originalUrl,
-        clientIP: req.ip,
-        headers: req.headers
-    })
-})
-
 // handling POST /headers request
 app.post("/", (req, res) => {
     res.json({
