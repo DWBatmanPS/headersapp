@@ -29,6 +29,24 @@ app.use(bodyParser.urlencoded({ extended: true}));
 // using Morgan middleware is a logging middleware
 app.use(morgan('combined'))
 
+// Add logging middleware to differentiate HTTP and HTTPS requests
+app.use((req, res, next) => {
+    const protocol = req.protocol; // 'http' or 'https'
+    console.log(`Received a ${protocol.toUpperCase()} request: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
+// Middleware to log response status after the response is sent
+app.use((req, res, next) => {
+    const originalSend = res.send;
+    res.send = function (body) {
+        const protocol = req.protocol; // 'http' or 'https'
+        console.log(`Response sent for ${protocol.toUpperCase()} request: ${req.method} ${req.originalUrl} with status ${res.statusCode}`);
+        originalSend.call(this, body);
+    };
+    next();
+});
+
 // handling GET /headers request 
 app.get("/", (req, res) => {
     res.json({
@@ -74,3 +92,4 @@ if (httpsServer) {
     });
 }
 //app.listen(port, () => {console.log(`Server running on port ${port}`)})
+
