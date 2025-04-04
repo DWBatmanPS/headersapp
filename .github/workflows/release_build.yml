@@ -1,9 +1,8 @@
-name: Build and Push Docker Image
+name: Build and Push release Docker Image
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published] 
 
 jobs:
   build:
@@ -90,3 +89,9 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: ./build

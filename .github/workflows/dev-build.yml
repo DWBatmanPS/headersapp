@@ -36,7 +36,7 @@ jobs:
 
       - name: Test POST request with curl
         run: |
-          POST_BODY='{"message":"Hello, World!"}''
+          POST_BODY='{"message":"Hello, World!"}'
           RESPONSE=$(curl -k -X POST https://localhost:443/ \
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
