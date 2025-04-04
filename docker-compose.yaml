@@ -10,5 +10,5 @@ services:
     environment:
       - SSL_Key=/etc/ssl/private/tls.key
       - SSL_Cert=/etc/ssl/private/tls.crt
-      - USESSL=true
+      - USESSL=false
     restart: always
