@@ -32,7 +32,7 @@ jobs:
           SSL_KEY: ./ssl/private/secret.key
           SSL_CERT: ./ssl/private/cert.cer
           USESSL: true
-        run: npm start &
+        run: sudo npm start &
 
       - name: Wait for the application to start
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -57,7 +57,7 @@ jobs:
       - name: Start the application without SSL
         env:
           USESSL: false
-        run: npm start & # Start the application in the background
+        run: sudo npm start & # Start the application in the background
 
       - name: Wait for the application to start (No SSL)
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
