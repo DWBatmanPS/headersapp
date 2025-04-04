@@ -16,18 +16,21 @@ jobs:
       - name: Create SSL certificate and key
         run: |
           mkdir -p ./ssl/private
-          echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/leaf.key
-          echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/chain.cer
+          echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/secret.key
+          echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/cert.cer
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '22' # Specify the Node.js version
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Start the application
         env:
-          SSL_KEY: ./ssl/private/leaf.key
-          SSL_CERT: ./ssl/private/chain.cer
+          SSL_KEY: ./ssl/private/secret.key
+          SSL_CERT: ./ssl/private/cert.cer
           USESSL: true
         run: npm start &
 
