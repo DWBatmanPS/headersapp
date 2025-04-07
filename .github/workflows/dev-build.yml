@@ -18,6 +18,14 @@ jobs:
           mkdir -p ./ssl/private
           echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/secret.key
           echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/cert.cer
+  
+      - name: Create .env file
+        run: |
+          echo "SSL_KEY=./ssl/private/secret.key" > .env
+          echo "SSL_CERT=./ssl/private/cert.cer" >> .env
+          echo "USESSL=true" >> .env
+          echo "PORTHTTP=8080" >> .env
+          echo "PORTHTTPS=8443" >> .env
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -54,12 +62,14 @@ jobs:
 
       - name: Stop the application (SSL)
         run: kill $(lsof -t -i:443) || true # Stop the application running on port 443
+      
+      - name: Update .env file for HTTP
+        run: |
+          sed -i 's/^USESSL=true/USESSL=false/' .env
+          sed -i 's/^PORTHTTPS=8443/PORTHTTPS=/' .env
 
       # Test with USESSL=false (HTTP on port 80)
       - name: Start the application without SSL
-        env:
-          USESSL: false
-          PORTHTTP: 8080
         run: sudo npm start & # Start the application in the background
 
       - name: Wait for the application to start (No SSL)
