@@ -35,7 +35,7 @@ jobs:
         run: npm install
 
       - name: Start the application
-        run: sudo npm start &
+        run: sudo npm start & echo $! > app.pid &
 
       - name: Wait for the application to start
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -54,9 +54,10 @@ jobs:
           fi
 
       - name: Stop the application (SSL)
-        run: kill $(lsof -t -i:8443) || true # Stop the application running on port 443
+        run: |
+          kill $(cat app.pid) || true # Kill the application using the saved PID
+          rm -f app.pid # Clean up the PID file
 
-              # Test with USESSL=false (HTTP on port 8080)
       - name: Update .env file for HTTP
         run: |
           sed -i 's/^USESSL=true/USESSL=false/' .env
@@ -64,7 +65,7 @@ jobs:
 
       # Test with USESSL=false (HTTP on port 80)
       - name: Start the application without SSL
-        run: sudo npm start & # Start the application in the background
+        run: sudo npm start & echo $! > app.pid & # Start the application in the background
 
       - name: Wait for the application to start (No SSL)
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -83,7 +84,9 @@ jobs:
           fi
 
       - name: Stop the application (No SSL)
-        run: kill $(lsof -t -i:8080) || true # Stop the application running on port 80
+        run: |
+          kill $(cat app.pid) || true # Kill the application using the saved PID
+          rm -f app.pid # Clean up the PID file
 
       - name: Set lower case org name
         id: org-name
