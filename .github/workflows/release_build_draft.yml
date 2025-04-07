@@ -3,6 +3,7 @@ name: Create Release
 on:
   push:
     tags:
+      - 'V*'
       - 'Preview-*'
   workflow_dispatch:
 
