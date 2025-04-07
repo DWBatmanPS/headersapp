@@ -8,10 +8,15 @@ import { url } from "inspector";
 import fs from "fs";
 import http from "http";
 import https from "https";
-const __dirname = dirname(fileURLToPath(import.meta.url)) // this is to handle file path 
-
 
 dotenv.config(); // Load environment variables from .env file
+
+const httpPort = process.env.PORTHTTP || 80; // Default to 80 if PORTHTTP is not set
+const httpsPort = process.env.PORTHTTPS || 443; // Default to 443 if PORTHTTPS is not set
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url)) // this is to handle file path 
+
 
 const app = express();
 //const port = process.env.PORT || 3000;
@@ -72,7 +77,7 @@ const httpServer = http.createServer(app);
 
 // Create HTTPS server if SSL files are provided
 let httpsServer;
-if (process.env.SSL_KEY && process.env.SSL_CERT && process.env.USESSL == "true") {
+if (process.env.SSL_KEY && process.env.SSL_CERT && process.env.USESSL === "true") {
     const options = {
         key: fs.readFileSync(process.env.SSL_KEY),
         cert: fs.readFileSync(process.env.SSL_CERT)
@@ -81,15 +86,13 @@ if (process.env.SSL_KEY && process.env.SSL_CERT && process.env.USESSL == "true")
 }
 
 // Start HTTP server
-httpServer.listen(80, () => {
-    console.log('HTTP server running on port 80');
+httpServer.listen(httpPort, () => {
+    console.log(`HTTP server running on port ${httpPort}`);
 });
 
 // Start HTTPS server if available
 if (httpsServer) {
-    httpsServer.listen(443, () => {
-        console.log('HTTPS server running on port 443');
+    httpsServer.listen(httpsPort, () => {
+        console.log(`HTTPS server running on port ${httpsPort}`);
     });
 }
-//app.listen(port, () => {console.log(`Server running on port ${port}`)})
-

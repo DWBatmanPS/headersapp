@@ -15,28 +15,33 @@ jobs:
       - name: Create SSL certificate and key
         run: |
           mkdir -p ./ssl/private
-          echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/leaf.key
-          echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/chain.cer
+          echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/secret.key
+          echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/cert.cer
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '22' # Specify the Node.js version
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Start the application
         env:
-          SSL_KEY: ./ssl/private/leaf.key
-          SSL_CERT: ./ssl/private/chain.cer
+          SSL_KEY: ./ssl/private/secret.key
+          SSL_CERT: ./ssl/private/cert.cer
           USESSL: true
-        run: npm start &
+          PORTHTTPS: 8443
+          PORTHTTP: 8080
+        run: sudo npm start &
 
       - name: Wait for the application to start
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
 
       - name: Test POST request with curl
         run: |
-          POST_BODY='{"message":"Hello, World!"}''
-          RESPONSE=$(curl -k -X POST https://localhost:443/ \
+          POST_BODY='{"message":"Hello, World!"}'
+          RESPONSE=$(curl -k -X POST https://localhost:8443/ \
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
@@ -47,13 +52,14 @@ jobs:
           fi
 
       - name: Stop the application (SSL)
-        run: kill $(lsof -t -i:443) || true # Stop the application running on port 443
+        run: kill $(lsof -t -i:8443) || true # Stop the application running on port 443
 
       # Test with USESSL=false (HTTP on port 80)
       - name: Start the application without SSL
         env:
           USESSL: false
-        run: npm start & # Start the application in the background
+          PORTHTTP: 8080
+        run: sudo npm start & # Start the application in the background
 
       - name: Wait for the application to start (No SSL)
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -61,7 +67,7 @@ jobs:
       - name: Test POST request with curl (HTTP)
         run: |
           POST_BODY='{"message":"Hello, World!"}'
-          RESPONSE=$(curl -X POST http://localhost:80/ \
+          RESPONSE=$(curl -X POST http://localhost:8080/ \
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
@@ -72,8 +78,7 @@ jobs:
           fi
 
       - name: Stop the application (No SSL)
-        run: kill $(lsof -t -i:80) || true # Stop the application running on port 80
-
+        run: kill $(lsof -t -i:8080) || true # Stop the application running on port 80
 
       - name: Set lower case org name
         id: org-name
@@ -81,14 +86,14 @@ jobs:
   
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:latest .
+          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev .
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v3

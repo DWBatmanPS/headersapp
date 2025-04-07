@@ -32,6 +32,8 @@ jobs:
           SSL_KEY: ./ssl/private/secret.key
           SSL_CERT: ./ssl/private/cert.cer
           USESSL: true
+          PORTHTTPS: 8443
+          PORTHTTP: 8080
         run: sudo npm start &
 
       - name: Wait for the application to start
@@ -40,7 +42,7 @@ jobs:
       - name: Test POST request with curl
         run: |
           POST_BODY='{"message":"Hello, World!"}'
-          RESPONSE=$(curl -k -X POST https://localhost:443/ \
+          RESPONSE=$(curl -k -X POST https://localhost:8443/ \
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
@@ -57,6 +59,7 @@ jobs:
       - name: Start the application without SSL
         env:
           USESSL: false
+          PORTHTTP: 8080
         run: sudo npm start & # Start the application in the background
 
       - name: Wait for the application to start (No SSL)
@@ -65,7 +68,7 @@ jobs:
       - name: Test POST request with curl (HTTP)
         run: |
           POST_BODY='{"message":"Hello, World!"}'
-          RESPONSE=$(curl -X POST http://localhost:80/ \
+          RESPONSE=$(curl -X POST http://localhost:8080/ \
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
