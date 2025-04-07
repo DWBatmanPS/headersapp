@@ -37,7 +37,7 @@ jobs:
         run: npm install
 
       - name: Start the application
-        run: sudo nnode index.js & echo $! > app.pid &
+        run: sudo node index.js & echo $! > app.pid &
 
       - name: Wait for the application to start
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
