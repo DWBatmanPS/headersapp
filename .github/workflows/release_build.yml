@@ -62,6 +62,7 @@ jobs:
         run: |
           sed -i 's/^USESSL=true/USESSL=false/' .env
           sed -i 's/^PORTHTTPS=8443/PORTHTTPS=/' .env
+          sed -i 's/^PORTHTTP=8080/PORTHTTP=8081/' .env
 
       # Test with USESSL=false (HTTP on port 80)
       - name: Start the application without SSL
@@ -77,7 +78,7 @@ jobs:
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
-          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
+          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8081","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
           if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
             echo "Test failed: Response does not match POST body (No SSL)"
             exit 1
