@@ -1,12 +1,10 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - 'v*'
-      - 'Prod-*'
+  release: 
+    types:
+      [published]
   workflow_dispatch:
-
 
 jobs:
   build:
@@ -39,7 +37,7 @@ jobs:
         run: npm install
 
       - name: Start the application
-        run: sudo nnode index.js & echo $! > app.pid &
+        run: sudo node index.js & echo $! > app.pid &
 
       - name: Wait for the application to start
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -114,16 +112,3 @@ jobs:
         run: |
           docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev
 
-      - name: Create changelog text
-        id: changelog
-        uses: loopwerk/tag-changelog@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-    
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }}
-          body: ${{ steps.changelog.outputs.changes }}
-          token: ${{ secrets.GITHUB_TOKEN }}
