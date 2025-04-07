@@ -1,8 +1,11 @@
-name: Build and Push release Docker Image
+name: Create Release
 
 on:
-  release:
-    types: [prereleased] 
+  push:
+    tags:
+      - 'v*'
+      - 'Preview-*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -110,8 +113,17 @@ jobs:
         run: |
           docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev
 
-      - name: Upload release artifacts
-        uses: actions/upload-artifact@v3
+      - name: Create changelog text
+        id: changelog
+        uses: loopwerk/tag-changelog@v1
         with:
-          name: release-artifacts
-          path: ./build
+          token: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref }}
+          prerelease: true
+          body: ${{ steps.changelog.outputs.changes }}
+          token: ${{ secrets.GITHUB_TOKEN }}
