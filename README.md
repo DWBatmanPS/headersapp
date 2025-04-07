@@ -7,6 +7,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 - Mirrors all request headers sent to the application.
 - Supports both GET and POST requests.
 - Can be deployed directly or as a Docker container.
+- Can support HTTP and HTTPS
 
 ## Requirements
 
@@ -15,12 +16,14 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 
 ## Installation
 
-### Direct Deployment
+### HTTP Only
+
+#### Direct Deployment
 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/headerapp.git
+   git clone https://github.com/Adal8819/headerapp.git
    cd headerapp
 
 2. Install dependencies:
@@ -33,9 +36,32 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
    ```sh
    npm start
 
-4. The application will be running on http://localhost:3000.
+4. The application will be running on [http://localhost:3000](http://localhost:3000).
 
-### Docker Deployment
+#### Docker Deployment
+
+1. Clone the repository:
+
+   ```sh
+   git clone https://github.com/Adal8819/headerapp.git
+   cd headerapp
+
+
+2. Build the Docker image:
+
+   ```sh
+   docker build -t headerapp .
+   
+3. Run the Docker container:
+
+   ```sh
+   docker run -p 3000:3000 headerapp
+
+4. The application will be running on [http://localhost:3000](http://localhost:3000)
+
+### HTTP and HTTPS
+
+#### Direct Deployment with SSL
 
 1. Clone the repository:
 
@@ -43,18 +69,61 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
    git clone https://github.com/yourusername/headerapp.git
    cd headerapp
 
-
-2. Build the Docker image:
+2. Install dependencies:
 
    ```sh
-   docker build -t headeapp .
+   npm install
+
+3. Make sure that your SSL Certificates are in place. The application is designed to work with an unencrypted SSL key currently.
+
+4. Update the .ENV file to utilize SSL
+
+   ```text
+   SSL_KEY=./ssl/private/leaf.key
+   SSL_CERT=./ssl/private/chain.cer
+   USESSL=true
+   PORTHTTPS=8443
+   PORTHTTP=8080
+   ```
+
+5. Start the application:
+
+   ```sh
+   npm start
+
+6. The application will be running on [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443).
+
+#### Docker Deployment with SSL
+
+1. Clone the repository:
+
+   ```sh
+   git clone https://github.com/yourusername/headerapp.git
+   cd headerapp
+
+2. Make sure that your SSL Certificates are in place. The application is designed to work with an unencrypted SSL key currently.
+
+3. Update the .ENV file to utilize SSL
+
+   ```text
+   SSL_KEY=./etc/ssl/leaf.key
+   SSL_CERT=./etc/ssl/chain.cer
+   USESSL=true
+   PORTHTTPS=8443
+   PORTHTTP=8080
+   ```
+
+4. Build the Docker image:
+
+   ```sh
+   docker build -t headerapp .
    
-3. Run the Docker container:
+5. Run the Docker container you need to make sure that you are mounting in the SSL Certificates into the appropriate directory for SSL to function:
 
    ```sh
-   docker run -p 3000:3000 headerapp
+   docker run -v 'C:/path/to/your/ssl/files:/etc/ssl/certs' -p 8080:8080 -p 8443:8443 headerapp
 
-4. The application will be running on http://localhost:3000
+6. The application will be running on [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443).
 
 ## Usage
 
@@ -68,7 +137,7 @@ curl -X GET http://localhost:3000
 
 Response:
 
-```json 
+```json
 {
   "method": "GET",
   "url": "/",
@@ -83,7 +152,7 @@ Response:
 
 ## GutHub Actions
 
-This project uses GitHub Actions to build and push the Docker image to GitHub Container Registry for ease of deployment. The workflow is defined in .github/workflows/build.yml
+This project uses GitHub Actions to build and push the Docker image to GitHub Container Registry for ease of deployment. The workflow is defined in .github/workflows/container-build.yml
 
 ## Code Disclaimer
 

@@ -1,0 +1,114 @@
+name: Create Release
+
+on:
+  release: 
+    types:
+      [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create SSL certificate and key
+        run: |
+          mkdir -p ./ssl/private
+          echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/secret.key
+          echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/cert.cer
+
+      - name: Create .env file
+        run: |
+          echo "SSL_KEY=./ssl/private/secret.key" > .env
+          echo "SSL_CERT=./ssl/private/cert.cer" >> .env
+          echo "USESSL=true" >> .env
+          echo "PORTHTTP=8080" >> .env
+          echo "PORTHTTPS=8443" >> .env
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22' # Specify the Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start the application
+        run: sudo node index.js & echo $! > app.pid &
+
+      - name: Wait for the application to start
+        run: sleep 10 # Wait for 10 seconds to ensure the app is running
+
+      - name: Test POST request with curl
+        run: |
+          POST_BODY='{"message":"Hello, World!"}'
+          RESPONSE=$(curl -k -X POST https://localhost:8443/ \
+            -H "Content-Type: application/json" \
+            --data "$POST_BODY")
+          echo "Response: $RESPONSE"
+          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
+          if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
+            echo "Test failed: Response does not match POST body"
+            exit 1
+          fi
+
+      - name: Stop the application (SSL)
+        run: |
+          kill $(cat app.pid) || true # Kill the application using the saved PID
+          rm -f app.pid # Clean up the PID file
+
+      - name: Update .env file for HTTP
+        run: |
+          sed -i 's/^USESSL=true/USESSL=false/' .env
+          sed -i 's/^PORTHTTPS=8443/PORTHTTPS=/' .env
+          sed -i 's/^PORTHTTP=8080/PORTHTTP=8080/' .env
+
+      # Test with USESSL=false (HTTP on port 80)
+      - name: Start the application without SSL
+        run: sudo node index.js & echo $! > app.pid & # Start the application in the background
+
+      - name: Wait for the application to start (No SSL)
+        run: sleep 10 # Wait for 10 seconds to ensure the app is running
+
+      - name: Test POST request with curl (HTTP)
+        run: |
+          POST_BODY='{"message":"Hello, World!"}'
+          RESPONSE=$(curl -X POST http://localhost:8080/ \
+            -H "Content-Type: application/json" \
+            --data "$POST_BODY")
+          echo "Response: $RESPONSE"
+          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8080","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
+          if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
+            echo "Test failed: Response does not match POST body (No SSL)"
+            exit 1
+          fi
+
+      - name: Stop the application (No SSL)
+        run: |
+          kill $(cat app.pid) || true # Kill the application using the saved PID
+          rm -f app.pid # Clean up the PID file
+
+      - name: Build the application
+        run: npm run build
+
+      - name: List build artifacts
+        run: ls -la ./build
+
+      - name: Set lower case org name
+        id: org-name
+        run: echo "ORG_LC=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+  
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev .
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev
+
