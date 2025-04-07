@@ -54,9 +54,9 @@ jobs:
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
-          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
+          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8443","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
           if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
-            echo "Test failed: Response does not match POST body"
+            echo "Test failed: Response does not match POST"
             exit 1
           fi
 
@@ -82,7 +82,7 @@ jobs:
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
-          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
+          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8080","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
           if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
             echo "Test failed: Response does not match POST body (No SSL)"
             exit 1
