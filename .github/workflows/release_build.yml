@@ -35,7 +35,7 @@ jobs:
         run: npm install
 
       - name: Start the application
-        run: sudo npm start & echo $! > app.pid &
+        run: sudo nnode index.js & echo $! > app.pid &
 
       - name: Wait for the application to start
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -62,11 +62,11 @@ jobs:
         run: |
           sed -i 's/^USESSL=true/USESSL=false/' .env
           sed -i 's/^PORTHTTPS=8443/PORTHTTPS=/' .env
-          sed -i 's/^PORTHTTP=8080/PORTHTTP=8081/' .env
+          sed -i 's/^PORTHTTP=8080/PORTHTTP=8080/' .env
 
       # Test with USESSL=false (HTTP on port 80)
       - name: Start the application without SSL
-        run: sudo npm start & echo $! > app.pid & # Start the application in the background
+        run: sudo node index.js & echo $! > app.pid & # Start the application in the background
 
       - name: Wait for the application to start (No SSL)
         run: sleep 10 # Wait for 10 seconds to ensure the app is running
@@ -78,7 +78,7 @@ jobs:
             -H "Content-Type: application/json" \
             --data "$POST_BODY")
           echo "Response: $RESPONSE"
-          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8081","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
+          EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8080","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
           if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
             echo "Test failed: Response does not match POST body (No SSL)"
             exit 1
