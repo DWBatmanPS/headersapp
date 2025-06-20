@@ -105,15 +105,19 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-latest -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-${{ env.release_version }} .
+          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-latest -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-${{ env.release_version }} -t ghcr.io/${{ env.ORG_LC }}/headers-app:lates .
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Push Docker image
+      - name: Push Specific version Prod Docker image
         run: |
           docker push ghcr.io/${{ env.ORG_LC }}/headers-app:prod-${{ env.release_version }} 
 
-      - name: Push Docker image
+      - name: Push Prod-Latest Docker image
         run: |
           docker push ghcr.io/${{ env.ORG_LC }}/headers-app:prod-latest
+
+      - name: Push latest Docker image
+        run: |
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:lates
