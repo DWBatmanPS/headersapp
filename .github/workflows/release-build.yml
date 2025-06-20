@@ -95,12 +95,6 @@ jobs:
           kill $(cat app.pid) || true # Kill the application using the saved PID
           rm -f app.pid # Clean up the PID file
 
-      - name: Build the application
-        run: npm run build
-
-      - name: List build artifacts
-        run: ls -la ./build
-
       - name: Set lower case org name
         id: org-name
         run: echo "ORG_LC=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
