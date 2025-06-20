@@ -16,8 +16,8 @@ jobs:
       - name: Create SSL certificate and key
         run: |
           mkdir -p ./ssl/private
-          echo "${{ secrets.TEST_SSL_KEY }}" > ./ssl/private/secret.key
-          echo "${{ secrets.TEST_SSL_CERT }}" > ./ssl/private/cert.cer
+          openssl genrsa -out ./ssl/private/secret.key 2048
+          openssl req -new -x509 -key ./ssl/private/secret.key -out ./ssl/private/cert.cer -days 365 -subj "/CN=contoso.com"
   
       - name: Create .env file
         run: |
