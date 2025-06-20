@@ -112,8 +112,8 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:${{ env.release_version }} 
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:${{ env.release_version }} 
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:prod-latest
