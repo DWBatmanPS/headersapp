@@ -51,6 +51,8 @@ jobs:
           EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8443","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
           if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
             echo "Test failed: Response does not match POST"
+            echo "Expected: $EXPECTED_RESPONSE"
+            echo "Got: $RESPONSE"
             exit 1
           fi
 
@@ -82,6 +84,8 @@ jobs:
           EXPECTED_RESPONSE='{"method":"POST","url":"/","clientIP":"::1","headers":{"host":"localhost:8080","user-agent":"curl/8.5.0","accept":"*/*","content-type":"application/json","content-length":"27"}}'
           if [ "$RESPONSE" != "$EXPECTED_RESPONSE" ]; then
             echo "Test failed: Response does not match POST body (No SSL)"
+            echo "Expected: $EXPECTED_RESPONSE"
+            echo "Got: $RESPONSE"
             exit 1
           fi
 
