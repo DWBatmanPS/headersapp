@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir -p ./ssl/private
           openssl genrsa -out ./ssl/private/secret.key 2048
-          openssl req -new -x509 -key ./ssl/private/secret.key -out ./ssl/private/cert.cer -days 365 -subj "/CN=contoso.com"
+          openssl req -new -x509 -key ./ssl/private/secret.key -out ./ssl/private/cert.cer -days 30 -subj "/CN=contoso.com"
   
       - name: Create .env file
         run: |
@@ -94,13 +94,17 @@ jobs:
         id: org-name
         run: echo "ORG_LC=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
   
+
+      - name: Set Timestamp for use in image tag
+        run: echo "IMAGE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev .
+          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:${{ env.IMAGE_TAG }}-latest-dev .
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest-dev
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:${{ env.IMAGE_TAG }}-latest-dev
