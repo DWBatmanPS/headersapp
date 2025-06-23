@@ -101,7 +101,7 @@ jobs:
   
       - name: Set lower case release version
         id: release_version
-        run: echo "release_version=$(echo ${{ github.ref_name }} | tr '[:upper:]' '[:lower;]')" >> $GITHUB_ENV
+        run: echo "release_version=$(echo ${{ github.ref_name }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       
       - name: Build Docker image
         run: |
@@ -120,4 +120,4 @@ jobs:
 
       - name: Push latest Docker image
         run: |
-          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:lates
+          docker push ghcr.io/${{ env.ORG_LC }}/headers-app:latest
