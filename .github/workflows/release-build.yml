@@ -105,7 +105,7 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-latest -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-${{ env.release_version }} -t ghcr.io/${{ env.ORG_LC }}/headers-app:lates .
+          docker build -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-latest -t ghcr.io/${{ env.ORG_LC }}/headers-app:prod-${{ env.release_version }} -t ghcr.io/${{ env.ORG_LC }}/headers-app:latest .
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
