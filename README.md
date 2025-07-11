@@ -43,7 +43,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/Adal8819/headerapp.git
+   git clone https://github.com/DWBatmanPS/headerapp.git
    cd headerapp
 
 
@@ -55,9 +55,9 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 3. Run the Docker container:
 
    ```sh
-   docker run -p 3000:3000 headerapp
+   docker run -p 8080:8080 headerapp
 
-4. The application will be running on [http://localhost:3000](http://localhost:3000)
+4. The application will be running on [http://localhost:8080](http://localhost:8080)
 
 ### HTTP and HTTPS
 
@@ -66,7 +66,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/headerapp.git
+   git clone https://github.com/DWBatmanPS/headerapp.git
    cd headerapp
 
 2. Install dependencies:
