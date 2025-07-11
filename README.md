@@ -23,7 +23,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/Adal8819/headerapp.git
+   git clone https://github.com/DWBatmanPS/headerapp.git
    cd headerapp
 
 2. Install dependencies:
