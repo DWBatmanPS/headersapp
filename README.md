@@ -125,6 +125,30 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 
 6. The application will be running on [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443).
 
+## Environment configuration options
+
+Headerapp uses a .ENV file to house configurable values. There are several values that can be configured there. Below lists out the configurable values and what they control.
+
+| Keys | Accepted Values | Definitions|
+|-----------|:-----------:|:-----------|
+| SSL_KEY | string | This is the path defined to the SSL private key file. Currently the application expects the key file to be stored in plain text |
+| SSL_CERT | string | This is the path defined to the SSL public key file |
+| USESSL | boolean | This enables or disables TLS. If this is set the SSL_KEY and SSL_CERT values must be defined. |
+| PORTHTTPS | interger | This defines the HTTPS port. It is only used if the USESSL flag is set to true. If this is not set the applicatino will default to 8443. |
+| PORTHTTP | interger | This defines the HTTP port. If this is not set the application will default to 8080. |
+| DEBUG | boolean | This enables HTTP request debug logging to write to the console. This can be useful if you are troubleshooting what the application is seeing. |
+
+Below is a sample .ENV file
+
+``` text
+SSL_KEY=./ssl/private/leaf.key
+SSL_CERT=./ssl/private/chain.cer
+USESSL=true
+PORTHTTPS=8443
+PORTHTTP=8080
+DEBUG=true
+```
+
 ## Usage
 
 Send a GET or POST request to the application, and it will respond with the request headers.
