@@ -23,7 +23,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/DWBatmanPS/headerapp.git
+   git clone https://github.com/Adal8819/headerapp.git
    cd headerapp
 
 2. Install dependencies:
@@ -43,7 +43,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/DWBatmanPS/headerapp.git
+   git clone https://github.com/Adal8819/headerapp.git
    cd headerapp
 
 
@@ -66,7 +66,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/DWBatmanPS/headerapp.git
+   git clone https://github.com/Adal8819/headerapp.git
    cd headerapp
 
 2. Install dependencies:
@@ -98,7 +98,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/headerapp.git
+   git clone https://github.com/Adal8819/headerapp.git
    cd headerapp
 
 2. Make sure that your SSL Certificates are in place. The application is designed to work with an unencrypted SSL key currently.
