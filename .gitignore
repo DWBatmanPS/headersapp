@@ -127,3 +127,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignore npm executable folders
+node_modules/
+
+# Ignore local package-lock files
+package-lock.json
