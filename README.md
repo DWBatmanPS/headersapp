@@ -123,7 +123,7 @@ HeaderApp is a Node.js application that mirrors all request headers sent to it. 
    ```sh
    docker run -v 'C:/path/to/your/ssl/files:/etc/ssl/certs' -p 8080:8080 -p 8443:8443 headerapp
 
-6. The application will be running on [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443).
+6. The application will be running on [http://localhost:8080](http://localhost:8080) and [https://localhost:8443](https://localhost:8443)
 
 ## Environment configuration options
 
